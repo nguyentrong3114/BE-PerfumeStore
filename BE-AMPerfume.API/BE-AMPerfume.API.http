@@ -1,0 +1,6 @@
+@BE_AMPerfume.API_HostAddress = http://localhost:5047
+
+GET {{BE_AMPerfume.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
