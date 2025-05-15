@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using BE_AMPerfume.DAL.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,12 +55,16 @@ builder.Services.AddCors(options =>
 
 // 3️ Đăng ký Repository & Service (Dependency Injection)
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddSingleton<JwtTokenGenerator>(); // dùng để tạo JWT
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddSingleton<JwtTokenGenerator>(); 
 
 // 4️ Đăng ký AutoMapper để map DTO ↔ Model
 builder.Services.AddAutoMapper(typeof(AutoMapperUserProfile));
+builder.Services.AddAutoMapper(typeof(AutoMapperProduct));
 
 // 5️ Cấu hình JWT Bearer Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

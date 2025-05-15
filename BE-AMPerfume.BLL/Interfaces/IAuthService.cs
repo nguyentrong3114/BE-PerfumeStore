@@ -7,3 +7,4 @@ public interface IAuthService
     Task<AuthResponseDTO?> IsLogin(string email);
 
 }
+ 
