@@ -75,11 +75,20 @@ namespace BE_AMPerfume.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<float>("MaxPrice")
+                        .HasColumnType("float");
+
+                    b.Property<float>("MinPrice")
+                        .HasColumnType("float");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<int?>("ProductImageId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProductImageId1")
                         .HasColumnType("int");
 
                     b.Property<string>("Scent")
@@ -98,6 +107,9 @@ namespace BE_AMPerfume.DAL.Migrations
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("ProductImageId");
+
+                    b.HasIndex("ProductImageId1")
+                        .IsUnique();
 
                     b.ToTable("Products");
                 });
@@ -129,9 +141,6 @@ namespace BE_AMPerfume.DAL.Migrations
                     b.Property<string>("ImageUrl5")
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int");
-
                     b.Property<string>("ThumbnailUrl")
                         .HasColumnType("longtext");
 
@@ -139,8 +148,6 @@ namespace BE_AMPerfume.DAL.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
 
                     b.ToTable("ProductImages");
                 });
@@ -296,21 +303,15 @@ namespace BE_AMPerfume.DAL.Migrations
                         .WithMany()
                         .HasForeignKey("ProductImageId");
 
+                    b.HasOne("BE_AMPerfume.Core.Models.ProductImage", null)
+                        .WithOne("Product")
+                        .HasForeignKey("BE_AMPerfume.Core.Models.Product", "ProductImageId1");
+
                     b.Navigation("Brand");
 
                     b.Navigation("Category");
 
                     b.Navigation("ProductImage");
-                });
-
-            modelBuilder.Entity("BE_AMPerfume.Core.Models.ProductImage", b =>
-                {
-                    b.HasOne("BE_AMPerfume.Core.Models.Product", "Product")
-                        .WithMany("Images")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("BE_AMPerfume.Core.Models.ProductVariant", b =>
@@ -344,12 +345,16 @@ namespace BE_AMPerfume.DAL.Migrations
 
             modelBuilder.Entity("BE_AMPerfume.Core.Models.Product", b =>
                 {
-                    b.Navigation("Images");
-
                     b.Navigation("Notes")
                         .IsRequired();
 
                     b.Navigation("Variants");
+                });
+
+            modelBuilder.Entity("BE_AMPerfume.Core.Models.ProductImage", b =>
+                {
+                    b.Navigation("Product")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Category", b =>

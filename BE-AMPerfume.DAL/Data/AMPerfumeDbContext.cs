@@ -21,12 +21,6 @@ public class AMPerfumeDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // Cấu hình quan hệ 1 - N: Product -> ProductImages
-        modelBuilder.Entity<Product>()
-            .HasMany(p => p.Images)
-            .WithOne(i => i.Product)
-            .HasForeignKey(i => i.ProductId)
-            .OnDelete(DeleteBehavior.Cascade);
         // Cấu hình quan hệ 1 - N: Product -> ProductVariants
         modelBuilder.Entity<Product>()
             .HasMany(p => p.Variants)

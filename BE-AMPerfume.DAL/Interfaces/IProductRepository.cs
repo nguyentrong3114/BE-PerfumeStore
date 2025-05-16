@@ -3,7 +3,7 @@ using BE_AMPerfume.Core.Models;
 public interface IProductRepository
 {
     Task<Product> GetProductByIdAsync(int id);
-    Task<List<Product>> GetAllProductAsync();
+    Task<List<Product>> GetAllProductAsync(string? gender, string? category, decimal? priceMin, decimal? priceMax, string? notes);
     Task<IEnumerable<Product>> GetProductsByCategoryIdAsync(int categoryId);
     Task<IEnumerable<Product>> GetProductsByBrandIdAsync(int brandId);
     Task<IEnumerable<Product>> SearchProductsAsync(string searchTerm);

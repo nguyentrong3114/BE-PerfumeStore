@@ -21,14 +21,44 @@ public class ProductRepository : IProductRepository
         throw new NotImplementedException();
     }
 
-    public async Task<List<Product>> GetAllProductAsync()
+    public async Task<List<Product>> GetAllProductAsync(
+        string? gender = null,
+        string? category = null,
+        decimal? priceMin = null,
+        decimal? priceMax = null,
+        string? notes = null
+    )
     {
-        return await _context.Products
+        var query = _context.Products
+            .Include(p => p.ProductImage)
             .Include(p => p.Brand)
             .Include(p => p.Category)
             .Include(p => p.Notes)
-            .ToListAsync();
+            .Include(p => p.Variants)
+            .AsQueryable();
+
+        if (!string.IsNullOrEmpty(gender))
+            query = query.Where(p => p.Gender == gender);
+
+        if (!string.IsNullOrEmpty(category))
+            query = query.Where(p => p.Category.Name == category);
+
+        if (priceMin.HasValue)
+            query = query.Where(p => p.Variants.Any(v => v.Price >= priceMin.Value));
+
+        if (priceMax.HasValue)
+            query = query.Where(p => p.Variants.Any(v => v.Price <= priceMax.Value));
+
+        if (!string.IsNullOrEmpty(notes))
+            query = query.Where(p =>
+                p.Notes.Top.Contains(notes) ||
+                p.Notes.Middle.Contains(notes) ||
+                p.Notes.Base.Contains(notes)
+            );
+
+        return await query.ToListAsync();
     }
+
 
     public Task<Product> GetProductByIdAsync(int id)
     {

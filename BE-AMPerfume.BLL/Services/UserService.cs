@@ -16,12 +16,25 @@ public class UserService : IUserService
         _mapper = mapper;
     }
 
-    public async Task<bool> RegisterAsync(RegisterDTO dto)
+    public async Task<AuthResponseDTO> RegisterAsync(RegisterDTO dto)
     {
         var existingUser = await _repository.GetByEmailAsync(dto.Email);
         if (existingUser != null)
-            return false;
-
+        {
+            return new AuthResponseDTO
+            {
+                IsSuccess = false,
+                Message = "Email đã được sử dụng"
+            };
+        }
+        if (dto.Password.Length < 6)
+        {
+            return new AuthResponseDTO
+            {
+                IsSuccess = false,
+                Message = "Mật khẩu phải có ít nhất 6 ký tự"
+            };
+        }
         var newUser = new User
         {
             Name = dto.Name,
@@ -32,7 +45,11 @@ public class UserService : IUserService
         };
 
         await _repository.CreateAsync(newUser);
-        return true;
+        return new AuthResponseDTO
+        {
+            IsSuccess = true,
+            Message = "Đăng ký thành công"
+        };
     }
 
     public async Task<IEnumerable<UserDTO>> GetAllAsync()
@@ -48,4 +65,5 @@ public class UserService : IUserService
         var hash = sha256.ComputeHash(bytes);
         return Convert.ToBase64String(hash);
     }
+
 }

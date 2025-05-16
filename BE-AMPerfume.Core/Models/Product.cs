@@ -14,7 +14,8 @@ public class Product
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-
+    public float MinPrice { get; set; }
+    public float MaxPrice { get; set; }
     public int BrandId { get; set; }
     public Brand Brand { get; set; } = null!;
     public Note Notes { get; set; } = null!;
@@ -22,10 +23,5 @@ public class Product
     public ProductImage? ProductImage { get; set; } = null!;
     public int CategoryId { get; set; }
     public Category Category { get; set; } = null!;
-
-    // Nhiều ảnh cho mỗi sản phẩm
-    public ICollection<ProductImage> Images { get; set; } = new List<ProductImage>();
     public ICollection<ProductVariant> Variants { get; set; } = new List<ProductVariant>();
-    
-
 }

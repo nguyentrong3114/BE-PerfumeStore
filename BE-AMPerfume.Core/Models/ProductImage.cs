@@ -10,7 +10,7 @@ public class ProductImage
     public string? ImageUrl3 { get; set; }
     public string? ImageUrl4 { get; set; }
     public string? ImageUrl5 { get; set; }
-    public int? ProductId { get; set; }
+
     public Product Product { get; set; } = null!;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;

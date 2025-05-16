@@ -22,9 +22,10 @@ namespace BE_AMPerfume.API.Controllers
         public async Task<IActionResult> Login(LoginDTO dto)
         {
             var result = await _authService.LoginAsync(dto);
-            if (result == null)
-                return Unauthorized("Invalid credentials.");
-
+            if (result == null )
+            {
+                return Unauthorized(new { message = result?.Message ?? "Đăng nhập thất bại" });
+            }
             // Set token vào HttpOnly cookie
             if (!string.IsNullOrEmpty(result.Token))
             {
@@ -65,7 +66,12 @@ namespace BE_AMPerfume.API.Controllers
             if (result == null)
                 return NotFound("Không tìm thấy người dùng");
 
-            return Ok(result); // Trả về DTO chứa fullName + email
+            return Ok(new
+            {
+                email = result.Email,
+                fullName = result.FullName,
+                message = "Đã đăng nhập"
+            });
         }
         [HttpDelete()]
         public IActionResult Logout()
