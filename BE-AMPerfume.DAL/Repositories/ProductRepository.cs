@@ -30,7 +30,7 @@ public class ProductRepository : IProductRepository
     )
     {
         var query = _context.Products
-            .Include(p => p.ProductImage)
+            .Include(p => p.ProductImages)
             .Include(p => p.Brand)
             .Include(p => p.Category)
             .Include(p => p.Notes)
@@ -62,7 +62,7 @@ public class ProductRepository : IProductRepository
     public async Task<Product> GetProductByIdAsync(int id)
     {
         var product = await _context.Products
-            .Include(p => p.ProductImage)
+            .Include(p => p.ProductImages)
             .Include(p => p.Brand)
             .Include(p => p.Category)
             .Include(p => p.Notes)

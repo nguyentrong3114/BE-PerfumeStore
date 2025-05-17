@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using BE_AMPerfume.DAL.Interfaces;
 
 [ApiController]
+
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;

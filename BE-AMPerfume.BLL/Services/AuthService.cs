@@ -22,7 +22,7 @@ public class AuthService : IAuthService
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginDto.Email);
         if (user == null || user.PasswordHash != HashPassword(loginDto.Password))
             return null;
-        var token = _tokenGenerator.GenerateToken(user.Email, user.Name);
+        var token = _tokenGenerator.GenerateToken(user.Email, user.Name,user.Id);
         return new AuthResponseDTO
         {
             FullName = user.Name,

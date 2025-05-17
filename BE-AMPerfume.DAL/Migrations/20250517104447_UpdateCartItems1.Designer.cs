@@ -4,6 +4,7 @@ using BE_AMPerfume.DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BE_AMPerfume.DAL.Migrations
 {
     [DbContext(typeof(AMPerfumeDbContext))]
-    partial class AMPerfumeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250517104447_UpdateCartItems1")]
+    partial class UpdateCartItems1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -213,7 +216,13 @@ namespace BE_AMPerfume.DAL.Migrations
                     b.Property<int>("CartId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ProductVariantId")
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductVariantId")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
@@ -364,7 +373,9 @@ namespace BE_AMPerfume.DAL.Migrations
 
                     b.HasOne("BE_AMPerfume.Core.Models.ProductVariant", "ProductVariant")
                         .WithMany()
-                        .HasForeignKey("ProductVariantId");
+                        .HasForeignKey("ProductVariantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Cart");
 

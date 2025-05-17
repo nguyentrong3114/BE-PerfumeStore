@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using System.Diagnostics;
 using System.Security.Claims;
 
 namespace BE_AMPerfume.API.Controllers

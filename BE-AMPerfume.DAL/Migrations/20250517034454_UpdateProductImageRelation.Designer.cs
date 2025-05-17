@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BE_AMPerfume.DAL.Migrations
 {
     [DbContext(typeof(AMPerfumeDbContext))]
-    [Migration("20250516160457_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250517034454_UpdateProductImageRelation")]
+    partial class UpdateProductImageRelation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -88,12 +88,6 @@ namespace BE_AMPerfume.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("ProductImageId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ProductImageId1")
-                        .HasColumnType("int");
-
                     b.Property<string>("Scent")
                         .HasColumnType("longtext");
 
@@ -109,50 +103,7 @@ namespace BE_AMPerfume.DAL.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("ProductImageId");
-
-                    b.HasIndex("ProductImageId1")
-                        .IsUnique();
-
                     b.ToTable("Products");
-                });
-
-            modelBuilder.Entity("BE_AMPerfume.Core.Models.ProductImage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("ImageUrl2")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("ImageUrl3")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("ImageUrl4")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("ImageUrl5")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("ThumbnailUrl")
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ProductImages");
                 });
 
             modelBuilder.Entity("BE_AMPerfume.Core.Models.ProductVariant", b =>
@@ -288,6 +239,37 @@ namespace BE_AMPerfume.DAL.Migrations
                     b.ToTable("Note");
                 });
 
+            modelBuilder.Entity("ProductImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("IsThumbnail")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductImages");
+                });
+
             modelBuilder.Entity("BE_AMPerfume.Core.Models.Product", b =>
                 {
                     b.HasOne("BE_AMPerfume.Core.Models.Brand", "Brand")
@@ -302,19 +284,9 @@ namespace BE_AMPerfume.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BE_AMPerfume.Core.Models.ProductImage", "ProductImage")
-                        .WithMany()
-                        .HasForeignKey("ProductImageId");
-
-                    b.HasOne("BE_AMPerfume.Core.Models.ProductImage", null)
-                        .WithOne("Product")
-                        .HasForeignKey("BE_AMPerfume.Core.Models.Product", "ProductImageId1");
-
                     b.Navigation("Brand");
 
                     b.Navigation("Category");
-
-                    b.Navigation("ProductImage");
                 });
 
             modelBuilder.Entity("BE_AMPerfume.Core.Models.ProductVariant", b =>
@@ -346,18 +318,25 @@ namespace BE_AMPerfume.DAL.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ProductImage", b =>
+                {
+                    b.HasOne("BE_AMPerfume.Core.Models.Product", "Product")
+                        .WithMany("ProductImages")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("BE_AMPerfume.Core.Models.Product", b =>
                 {
                     b.Navigation("Notes")
                         .IsRequired();
 
-                    b.Navigation("Variants");
-                });
+                    b.Navigation("ProductImages");
 
-            modelBuilder.Entity("BE_AMPerfume.Core.Models.ProductImage", b =>
-                {
-                    b.Navigation("Product")
-                        .IsRequired();
+                    b.Navigation("Variants");
                 });
 
             modelBuilder.Entity("Category", b =>

@@ -11,6 +11,9 @@ public class AMPerfumeDbContext : DbContext
     public DbSet<User> Users => Set<User>();
     public DbSet<Product> Products => Set<Product>();
     public DbSet<ProductImage> ProductImages => Set<ProductImage>();
+    public DbSet<ProductVariant> ProductVariants => Set<ProductVariant>();
+    public DbSet<Cart> Carts => Set<Cart>();
+    public DbSet<CartItems> CartItems => Set<CartItems>();
     public DbSet<Brand> Brands => Set<Brand>();
 
     // Nếu có thêm:
@@ -28,14 +31,19 @@ public class AMPerfumeDbContext : DbContext
             .HasForeignKey(v => v.ProductId)
             .OnDelete(DeleteBehavior.Cascade);
         modelBuilder.Entity<Product>()
-            .HasOne(p => p.ProductImage)
-            .WithMany() // hoặc .WithOne() nếu 1-1
-            .HasForeignKey(p => p.ProductImageId)
-            .HasPrincipalKey(pi => pi.Id);
+            .HasMany(p => p.ProductImages)
+            .WithOne(pi => pi.Product)
+            .HasForeignKey(pi => pi.ProductId)
+            .OnDelete(DeleteBehavior.Cascade);
         modelBuilder.Entity<Product>()
             .HasMany(p => p.Variants)
             .WithOne(v => v.Product)
             .HasForeignKey(v => v.ProductId)
             .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<User>()
+            .HasOne(u => u.Cart)
+            .WithOne(c => c.User)
+            .HasForeignKey<Cart>(c => c.UserId);
+
     }
 }

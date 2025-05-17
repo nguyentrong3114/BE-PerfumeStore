@@ -11,12 +11,21 @@ namespace BE_AMPerfume.DAL.Repositories
         public IProductRepository ProductRepository { get; }
         public IUserRepository UserRepository { get; }
 
+        public ICartItemRepository CartItemsRepository{ get; }
+
+        public ICartRepository CartRepository { get; }
+
+
         public UnitOfWork(
             AMPerfumeDbContext context,
             IProductRepository productRepository,
+            ICartRepository cartRepository,
+            ICartItemRepository cartItemsRepository,
             IUserRepository userRepository)
          {
             _context = context;
+            CartRepository = cartRepository;
+            CartItemsRepository = cartItemsRepository;
             ProductRepository = productRepository;
             UserRepository = userRepository;
         }

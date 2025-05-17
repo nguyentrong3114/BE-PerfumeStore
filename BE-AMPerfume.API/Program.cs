@@ -56,15 +56,23 @@ builder.Services.AddCors(options =>
 // 3️ Đăng ký Repository & Service (Dependency Injection)
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ICartRepository, CartRepository>();
+builder.Services.AddScoped<ICartItemRepository, CartItemsRepository>();
+builder.Services.AddScoped<ICartService, CartService>();
+
+//Service
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddSingleton<JwtTokenGenerator>(); 
+builder.Services.AddSingleton<JwtTokenGenerator>();
+builder.Services.AddHttpContextAccessor();
 
 // 4️ Đăng ký AutoMapper để map DTO ↔ Model
 builder.Services.AddAutoMapper(typeof(AutoMapperUserProfile));
 builder.Services.AddAutoMapper(typeof(AutoMapperProduct));
+builder.Services.AddAutoMapper(typeof(AutoMapperCart));
+builder.Services.AddAutoMapper(typeof(AutoMapperCartItem));
 
 // 5️ Cấu hình JWT Bearer Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
