@@ -24,15 +24,16 @@ public class ProductService : IProductService
         throw new NotImplementedException();
     }
 
-    public async Task<List<ProductDTO>> GetAllProductAsync(string? gender, string? category, decimal? priceMin, decimal? priceMax, string? notes)
+    public async Task<List<ProductDTO>> GetAllProductAsync(string? gender, string? brand, decimal? priceMin, decimal? priceMax, string? notes)
     {
-        var products = await _unitOfWork.ProductRepository.GetAllProductAsync(gender, category, priceMin, priceMax, notes);
+        var products = await _unitOfWork.ProductRepository.GetAllProductAsync(gender, brand, priceMin, priceMax, notes);
         return _mapper.Map<List<ProductDTO>>(products);
     }
 
-    public Task<ProductDTO> GetProductByIdAsync(int id)
+    public async Task<ProductDetailDTO> GetProductByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        var product = await _unitOfWork.ProductRepository.GetProductByIdAsync(id);
+        return _mapper.Map<ProductDetailDTO>(product);
     }
 
     public Task<ProductDTO> UpdateAsync(int id, ProductDTO productDto)

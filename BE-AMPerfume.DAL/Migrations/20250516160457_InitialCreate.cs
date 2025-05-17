@@ -130,6 +130,8 @@ namespace BE_AMPerfume.DAL.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    MinPrice = table.Column<float>(type: "float", nullable: false),
+                    MaxPrice = table.Column<float>(type: "float", nullable: false),
                     BrandId = table.Column<int>(type: "int", nullable: false),
                     ProductImageId = table.Column<int>(type: "int", nullable: true),
                     CategoryId = table.Column<int>(type: "int", nullable: false),

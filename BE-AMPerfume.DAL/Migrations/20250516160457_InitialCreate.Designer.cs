@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BE_AMPerfume.DAL.Migrations
 {
     [DbContext(typeof(AMPerfumeDbContext))]
-    [Migration("20250516080355_InitialCreate1")]
-    partial class InitialCreate1
+    [Migration("20250516160457_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

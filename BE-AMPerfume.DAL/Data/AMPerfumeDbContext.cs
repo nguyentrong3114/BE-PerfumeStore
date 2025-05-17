@@ -32,7 +32,10 @@ public class AMPerfumeDbContext : DbContext
             .WithMany() // hoặc .WithOne() nếu 1-1
             .HasForeignKey(p => p.ProductImageId)
             .HasPrincipalKey(pi => pi.Id);
-
-
+        modelBuilder.Entity<Product>()
+            .HasMany(p => p.Variants)
+            .WithOne(v => v.Product)
+            .HasForeignKey(v => v.ProductId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -23,7 +23,7 @@ public class ProductRepository : IProductRepository
 
     public async Task<List<Product>> GetAllProductAsync(
         string? gender = null,
-        string? category = null,
+        string? brand = null,
         decimal? priceMin = null,
         decimal? priceMax = null,
         string? notes = null
@@ -40,8 +40,8 @@ public class ProductRepository : IProductRepository
         if (!string.IsNullOrEmpty(gender))
             query = query.Where(p => p.Gender == gender);
 
-        if (!string.IsNullOrEmpty(category))
-            query = query.Where(p => p.Category.Name == category);
+        if (!string.IsNullOrEmpty(brand))
+            query = query.Where(p => p.Brand.Name == brand);
 
         if (priceMin.HasValue)
             query = query.Where(p => p.Variants.Any(v => v.Price >= priceMin.Value));
@@ -59,10 +59,20 @@ public class ProductRepository : IProductRepository
         return await query.ToListAsync();
     }
 
-
-    public Task<Product> GetProductByIdAsync(int id)
+    public async Task<Product> GetProductByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        var product = await _context.Products
+            .Include(p => p.ProductImage)
+            .Include(p => p.Brand)
+            .Include(p => p.Category)
+            .Include(p => p.Notes)
+            .Include(p => p.Variants)
+            .FirstOrDefaultAsync(p => p.Id == id);
+
+        if (product == null)
+            throw new InvalidOperationException($"Product with id {id} not found.");
+
+        return product;
     }
 
     public Task<IEnumerable<Product>> GetProductsByBrandIdAsync(int brandId)
