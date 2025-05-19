@@ -12,7 +12,7 @@ namespace BE_AMPerfume.Core.Models
         public string Email { get; set; } = null!;
 
         [JsonIgnore]
-        public string PasswordHash { get; set; } = null!;
+        public string? PasswordHash { get; set; } = null!;
 
         public string? Phone { get; set; }
 

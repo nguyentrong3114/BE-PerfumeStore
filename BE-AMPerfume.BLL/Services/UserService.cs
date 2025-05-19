@@ -27,6 +27,14 @@ public class UserService : IUserService
                 Message = "Email đã được sử dụng"
             };
         }
+        if (dto.Password == null)
+        {
+            return new AuthResponseDTO
+            {
+                IsSuccess = false,
+                Message = "Thiếu mật khẩu"
+            };
+        }
         if (dto.Password.Length < 6)
         {
             return new AuthResponseDTO

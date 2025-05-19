@@ -1,6 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.Facebook;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using AspNet.Security.OAuth.GitHub;
 
 namespace BE_AMPerfume.API.Controllers
 {
@@ -21,7 +26,7 @@ namespace BE_AMPerfume.API.Controllers
         public async Task<IActionResult> Login(LoginDTO dto)
         {
             var result = await _authService.LoginAsync(dto);
-            if (result == null )
+            if (result == null)
             {
                 return Unauthorized(new { message = result?.Message ?? "Đăng nhập thất bại" });
             }
@@ -73,11 +78,61 @@ namespace BE_AMPerfume.API.Controllers
             });
         }
         [HttpDelete()]
-        public IActionResult Logout()
+        public async Task<IActionResult> LogoutAsync()
         {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             HttpContext.Response.Cookies.Delete("token");
             return Ok(new { message = "Đăng xuất thành công" });
         }
+        [HttpGet("google")]
+        public IActionResult GoogleLogin()
+        {
+            var props = new AuthenticationProperties
+            {
+                RedirectUri = Url.Action(nameof(ExternalLoginCallback), new { provider = "Google" })!
+            };
+            return Challenge(props, GoogleDefaults.AuthenticationScheme);
+        }
+
+        [HttpGet("facebook")]
+        public IActionResult FacebookLogin()
+        {
+            var props = new AuthenticationProperties
+            {
+                RedirectUri = Url.Action(nameof(ExternalLoginCallback), new { provider = "Facebook" })!
+            };
+            return Challenge(props, FacebookDefaults.AuthenticationScheme);
+        }
+        [HttpGet("github")]
+        public IActionResult LoginWithGitHub()
+        {
+            return Challenge(new AuthenticationProperties
+            {
+                RedirectUri = Url.Action(nameof(ExternalLoginCallback), new { provider = "GitHub" })!
+            }, GitHubAuthenticationDefaults.AuthenticationScheme);
+        }
+
+        [HttpGet("callback")]
+        public async Task<IActionResult> ExternalLoginCallback(string provider)
+        {
+            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            if (!result.Succeeded)
+                return Unauthorized();
+
+            var token = await _authService.HandleExternalLoginAsync(result.Principal);
+
+            HttpContext.Response.Cookies.Append("token", token, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = false,
+                SameSite = SameSiteMode.Lax,
+                Expires = DateTime.UtcNow.AddHours(1)
+            });
+
+            return Redirect("http://localhost:3000/");
+        }
+
+
 
     }
 }

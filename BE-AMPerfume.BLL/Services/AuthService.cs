@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using BE_AMPerfume.BLL.Helpers;
@@ -10,10 +11,12 @@ public class AuthService : IAuthService
 {
     private readonly AMPerfumeDbContext _context;
     private readonly JwtTokenGenerator _tokenGenerator;
-    public AuthService(AMPerfumeDbContext context, JwtTokenGenerator tokenGenerator)
+    private readonly IUserRepository  _userRepository;
+    public AuthService(AMPerfumeDbContext context, JwtTokenGenerator tokenGenerator, IUserRepository  userRepository)
     {
         _tokenGenerator = tokenGenerator;
         _context = context;
+        _userRepository = userRepository;
     }
 
 
@@ -22,7 +25,7 @@ public class AuthService : IAuthService
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginDto.Email);
         if (user == null || user.PasswordHash != HashPassword(loginDto.Password))
             return null;
-        var token = _tokenGenerator.GenerateToken(user.Email, user.Name,user.Id);
+        var token = _tokenGenerator.GenerateToken(user.Email, user.Name, user.Id);
         return new AuthResponseDTO
         {
             FullName = user.Name,
@@ -51,6 +54,27 @@ public class AuthService : IAuthService
         var hash = sha256.ComputeHash(bytes);
         return Convert.ToBase64String(hash);
     }
+    public async Task<string> HandleExternalLoginAsync(ClaimsPrincipal principal)
+    {
+        var email = principal.FindFirst(ClaimTypes.Email)?.Value;
+        var name = principal.Identity?.Name;
 
+        if (string.IsNullOrEmpty(email))
+            throw new Exception("Email claim not found.");
 
+        var user = await _userRepository.GetByEmailAsync(email);
+        if (user == null)
+        {
+            user = new User
+            {
+                Email = email,
+                Name = name ?? "",
+                CreatedAt = DateTime.UtcNow
+            };
+            await _userRepository.CreateAsync(user);
+        }
+
+        var token = _tokenGenerator.GenerateToken(user.Email, user.Name, user.Id);
+        return token;
+    }
 }
