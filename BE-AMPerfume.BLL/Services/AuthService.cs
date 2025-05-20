@@ -3,28 +3,26 @@ using System.Security.Cryptography;
 using System.Text;
 using BE_AMPerfume.BLL.Helpers;
 using BE_AMPerfume.Core.Models;
-using BE_AMPerfume.DAL.Data;
 using BE_AMPerfume.DAL.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 public class AuthService : IAuthService
 {
-    private readonly AMPerfumeDbContext _context;
     private readonly JwtTokenGenerator _tokenGenerator;
-    private readonly IUserRepository  _userRepository;
-    public AuthService(AMPerfumeDbContext context, JwtTokenGenerator tokenGenerator, IUserRepository  userRepository)
+    private readonly IUserRepository _userRepository;
+
+    public AuthService(JwtTokenGenerator tokenGenerator, IUserRepository userRepository)
     {
         _tokenGenerator = tokenGenerator;
-        _context = context;
         _userRepository = userRepository;
     }
 
-
     public async Task<AuthResponseDTO?> LoginAsync(LoginDTO loginDto)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginDto.Email);
-        if (user == null || user.PasswordHash != HashPassword(loginDto.Password))
-            return null;
+        var hashedPassword = HashPassword(loginDto.Password);
+        var user = await _userRepository.GetByEmailAndPasswordHashAsync(loginDto.Email, hashedPassword);
+
+        if (user == null) return null;
+
         var token = _tokenGenerator.GenerateToken(user.Email, user.Name, user.Id);
         return new AuthResponseDTO
         {
@@ -36,7 +34,7 @@ public class AuthService : IAuthService
 
     public async Task<AuthResponseDTO?> IsLogin(string email)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        var user = await _userRepository.GetByEmailAsync(email);
         if (user == null) return null;
 
         return new AuthResponseDTO
@@ -46,7 +44,6 @@ public class AuthService : IAuthService
         };
     }
 
-
     private string HashPassword(string password)
     {
         using var sha256 = SHA256.Create();
@@ -54,6 +51,7 @@ public class AuthService : IAuthService
         var hash = sha256.ComputeHash(bytes);
         return Convert.ToBase64String(hash);
     }
+
     public async Task<string> HandleExternalLoginAsync(ClaimsPrincipal principal)
     {
         var email = principal.FindFirst(ClaimTypes.Email)?.Value;
@@ -77,4 +75,5 @@ public class AuthService : IAuthService
         var token = _tokenGenerator.GenerateToken(user.Email, user.Name, user.Id);
         return token;
     }
+
 }

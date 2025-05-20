@@ -30,7 +30,7 @@ namespace BE_AMPerfume.API.Controllers
             {
                 return Unauthorized(new { message = result?.Message ?? "Đăng nhập thất bại" });
             }
-            // Set token vào HttpOnly cookie
+
             if (!string.IsNullOrEmpty(result.Token))
             {
                 HttpContext.Response.Cookies.Append("token", result.Token, new CookieOptions
@@ -59,11 +59,9 @@ namespace BE_AMPerfume.API.Controllers
         [HttpGet]
         public async Task<IActionResult> IsLogin()
         {
-
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
-
             if (string.IsNullOrEmpty(email))
-                return Unauthorized("Token không hợp lệ hoặc không chứa ClaimTypes.Name");
+                return Unauthorized("Token không hợp lệ hoặc không chứa ClaimTypes.Email");
 
             var result = await _authService.IsLogin(email);
 
@@ -131,7 +129,6 @@ namespace BE_AMPerfume.API.Controllers
 
             return Redirect("http://localhost:3000/");
         }
-
 
 
     }

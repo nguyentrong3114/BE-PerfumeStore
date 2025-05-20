@@ -74,4 +74,30 @@ public class UserService : IUserService
         return Convert.ToBase64String(hash);
     }
 
+    public async Task<UserDTO?> GetUserAsync(string email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+            return null;
+
+        var existingUser = await _repository.GetByEmailAsync(email);
+        if (existingUser == null)
+            return null;
+
+        return new UserDTO
+        {
+            Email = existingUser.Email,
+            FullName = existingUser.Name,
+            Address = existingUser.Address,
+            CreatedAt = existingUser.CreatedAt,
+            UpdatedAt = existingUser.UpdatedAt,
+        };
+    }
+
+    public async Task<bool?> ChangePasswordAsync(string email,ChangePasswordDTO dto)
+    {
+        string oldPasswordHash = HashPassword(dto.OldPassword);
+        string newPasswordHash = HashPassword(dto.NewPassword);
+
+        return await _repository.UpdatePasswordAsync(email, oldPasswordHash, newPasswordHash);
+    }
 }

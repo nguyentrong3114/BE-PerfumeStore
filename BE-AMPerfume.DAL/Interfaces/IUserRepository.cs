@@ -3,7 +3,11 @@ using BE_AMPerfume.Core.Models;
 
 public interface IUserRepository
 {
-    Task<IEnumerable<User>> GetAllAsync();               // (không bắt buộc nếu chưa dùng)
-    Task<User?> GetByEmailAsync(string email);           // ← kiểm tra tồn tại
-    Task CreateAsync(User user);
+    Task<IEnumerable<User>> GetAllAsync();
+    Task<User?> GetByEmailAndPasswordHashAsync(string email, string passwordHash);
+
+    Task<User?> GetUserAsync(string email);             //admin
+    Task<User?> GetByEmailAsync(string email);   //check exists
+    Task<bool> UpdatePasswordAsync(string email, string passwordHash,string newPasswordHash); //update password
+    Task CreateAsync(User user); //register
 }

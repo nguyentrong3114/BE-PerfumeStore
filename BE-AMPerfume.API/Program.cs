@@ -40,17 +40,6 @@ builder.Services.AddCors(options =>
               .AllowCredentials(); // ← để gửi cookie (JWT)
     });
 });
-// Cấu hình CORS cho phép frontend Next.js gọi API
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowFrontend", policy =>
-    {
-        policy.WithOrigins("http://localhost:3000")
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials(); // ← để gửi cookie (JWT)
-    });
-});
 
 // ⬅️ Trước UseAuthentication
 
@@ -77,35 +66,62 @@ builder.Services.AddAutoMapper(typeof(AutoMapperProduct));
 builder.Services.AddAutoMapper(typeof(AutoMapperCart));
 builder.Services.AddAutoMapper(typeof(AutoMapperCartItem));
 
-// 5️ Cấu hình JWT Bearer Authentication
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+// 5️ Cấu hình Authentication cho cả JWT và External Login
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+{
+    options.Events = new JwtBearerEvents
     {
-        // Lấy token từ cookie thay vì header Authorization
-        options.Events = new JwtBearerEvents
+        OnMessageReceived = context =>
         {
-            OnMessageReceived = context =>
-            {
-                context.Token = context.Request.Cookies["token"];
-                return Task.CompletedTask;
-            }
-        };
+            context.Token = context.Request.Cookies["token"]; // JWT trong cookie
+            return Task.CompletedTask;
+        }
+    };
 
-        // Cấu hình xác thực token
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtSettings["Issuer"],
-            ValidAudience = jwtSettings["Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
-            ClockSkew = TimeSpan.Zero,
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
+        ClockSkew = TimeSpan.Zero,
+        NameClaimType = ClaimTypes.Email
+    };
+})
+.AddCookie("Cookies")
+.AddCookie("ExternalCookies") // Scheme riêng cho OAuth
+.AddGoogle("Google", options =>
+{
+    options.SignInScheme = "ExternalCookies";
+    options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+    options.CallbackPath = "/signin-google";
+})
+.AddFacebook("Facebook", options =>
+{
+    options.SignInScheme = "ExternalCookies";
+    options.AppId = builder.Configuration["Authentication:Facebook:AppId"];
+    options.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"];
+    options.CallbackPath = "/signin-facebook";
+})
+.AddGitHub("GitHub", options =>
+{
+    options.SignInScheme = "ExternalCookies";
+    options.ClientId = builder.Configuration["Authentication:GitHub:ClientId"];
+    options.ClientSecret = builder.Configuration["Authentication:GitHub:ClientSecret"];
+    options.CallbackPath = "/signin-github";
+    options.Scope.Add("user:email");
+});
 
-            NameClaimType = ClaimTypes.Email
-        };
-    });
+
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 // 6️ Authorization + Controller
@@ -113,32 +129,6 @@ JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 
-
-
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-})
-.AddCookie()
-.AddGoogle(googleOptions =>
-{
-    googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
-    googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
-    googleOptions.CallbackPath = "/signin-google";
-})
-.AddFacebook(facebookOptions =>
-{
-    facebookOptions.AppId = builder.Configuration["Authentication:Facebook:AppId"];
-    facebookOptions.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"];
-    facebookOptions.CallbackPath = "/signin-facebook";
-})
-.AddGitHub(options =>
-{
-    options.ClientId = builder.Configuration["Authentication:GitHub:ClientId"];
-    options.ClientSecret = builder.Configuration["Authentication:GitHub:ClientSecret"];
-    options.CallbackPath = "/signin-github";
-    options.Scope.Add("user:email");
-});
 
 
 // 7️ Swagger để test API
