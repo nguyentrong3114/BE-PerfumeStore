@@ -1,4 +1,5 @@
 using BE_AMPerfume.DAL.Data;
+using Microsoft.EntityFrameworkCore;
 
 public class CartItemsRepository : ICartItemRepository
 {
@@ -9,9 +10,10 @@ public class CartItemsRepository : ICartItemRepository
         _context = context;
     }
 
-    public Task AddToCartAsync(CartItems cartItem)
+    public async Task AddToCartAsync(CartItems cartItem)
     {
-        throw new NotImplementedException();
+        await _context.CartItems.AddAsync(cartItem);
+        await _context.SaveChangesAsync();
     }
 
     public Task ClearCartAsync(string userId)
@@ -19,9 +21,25 @@ public class CartItemsRepository : ICartItemRepository
         throw new NotImplementedException();
     }
 
+    public void DeleteItemFromCart(int cartId, int productVariantId)
+    {
+        var item = _context.CartItems
+        .FirstOrDefault(x => x.CartId == cartId && x.ProductVariantId == productVariantId);
+        if (item != null)
+        {
+            _context.CartItems.Remove(item);
+        }
+    }
+
     public Task<CartItems> GetCartItemByIdAsync(int id)
     {
         throw new NotImplementedException();
+    }
+
+    public async Task<CartItems?> GetExistingCartItemAsync(int cartId, int productVariantId)
+    {
+        return await _context.CartItems
+            .FirstOrDefaultAsync(x => x.CartId == cartId && x.ProductVariantId == productVariantId);
     }
 
     public Task RemoveFromCartAsync(int cartItemId)
@@ -29,8 +47,8 @@ public class CartItemsRepository : ICartItemRepository
         throw new NotImplementedException();
     }
 
-    public Task UpdateCartItemQuantityAsync(int cartItemId, int quantity)
+    public void UpdateCartItemQuantity(CartItems cartItems)
     {
-        throw new NotImplementedException();
+        _context.Update(cartItems);
     }
 }
