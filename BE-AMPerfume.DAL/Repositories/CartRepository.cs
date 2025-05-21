@@ -10,9 +10,13 @@ public class CartRepository : ICartRepository
         _context = context;
     }
 
-    public Task AddCartAsync(Cart cart)
+    public async Task GenerateCartAsync(Cart cart)
     {
-        throw new NotImplementedException();
+        var exists = await _context.Carts.AnyAsync(c => c.UserId == cart.UserId);
+        if (!exists)
+        {
+            await _context.Carts.AddAsync(cart);
+        }
     }
 
     public Task AddProductToCartAsync(int cartId, int productId, int quantity)

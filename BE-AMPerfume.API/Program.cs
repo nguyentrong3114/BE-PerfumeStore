@@ -56,6 +56,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ICartItemService, CartItemService>();
+builder.Services.AddScoped<IEmailService, EmailService>(); 
 
 
 builder.Services.AddSingleton<JwtTokenGenerator>();
@@ -66,6 +67,8 @@ builder.Services.AddAutoMapper(typeof(AutoMapperUserProfile));
 builder.Services.AddAutoMapper(typeof(AutoMapperProduct));
 builder.Services.AddAutoMapper(typeof(AutoMapperCart));
 builder.Services.AddAutoMapper(typeof(AutoMapperCartItem));
+
+builder.Services.AddMemoryCache();
 
 // 5️ Cấu hình Authentication cho cả JWT và External Login
 builder.Services.AddAuthentication(options =>

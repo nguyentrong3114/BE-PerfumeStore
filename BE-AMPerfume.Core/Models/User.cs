@@ -19,6 +19,8 @@ namespace BE_AMPerfume.Core.Models
         public string? Address { get; set; }
 
         public string? Role { get; set; }
+        public bool IsVerify { get; set; } = false;
+
         public virtual Cart Cart { get; set; } = null!;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

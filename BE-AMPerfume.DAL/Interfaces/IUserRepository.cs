@@ -9,5 +9,7 @@ public interface IUserRepository
     Task<User?> GetUserAsync(string email);             //admin
     Task<User?> GetByEmailAsync(string email);   //check exists
     Task<bool> UpdatePasswordAsync(string email, string passwordHash,string newPasswordHash); //update password
+
+    Task<bool> UpdateAsync(User user);
     Task CreateAsync(User user); //register
 }

@@ -8,5 +8,6 @@ public interface IUserService
 
     Task<UserDTO> GetUserAsync(string email);
     Task<IEnumerable<UserDTO>> GetAllAsync();
-    Task<bool?> ChangePasswordAsync(string email,ChangePasswordDTO changePasswordDTO);
+    Task<bool?> ChangePasswordAsync(string email, ChangePasswordDTO changePasswordDTO);
+    Task<bool> MarkUserAsVerifiedAsync(string email);
 }

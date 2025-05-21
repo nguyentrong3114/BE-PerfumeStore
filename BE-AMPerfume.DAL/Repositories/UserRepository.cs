@@ -51,4 +51,19 @@ public class UserRepository : IUserRepository
 
         return true;
     }
+
+    public async Task<bool> UpdateAsync(User user)
+    {
+        var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == user.Email);
+        if (existingUser == null)
+            return false;
+
+        // Update properties as needed
+        existingUser.IsVerify = user.IsVerify;
+        // Add other properties as necessary
+
+        _context.Users.Update(existingUser);
+        await _context.SaveChangesAsync();
+        return true;
+    }
 }

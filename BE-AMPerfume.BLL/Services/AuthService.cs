@@ -9,11 +9,12 @@ public class AuthService : IAuthService
 {
     private readonly JwtTokenGenerator _tokenGenerator;
     private readonly IUserRepository _userRepository;
-
-    public AuthService(JwtTokenGenerator tokenGenerator, IUserRepository userRepository)
+    private readonly IEmailService _emailService;
+    public AuthService(JwtTokenGenerator tokenGenerator, IUserRepository userRepository, IEmailService emailService)
     {
         _tokenGenerator = tokenGenerator;
         _userRepository = userRepository;
+        _emailService = emailService;
     }
 
     public async Task<AuthResponseDTO?> LoginAsync(LoginDTO loginDto)
@@ -59,7 +60,6 @@ public class AuthService : IAuthService
 
         if (string.IsNullOrEmpty(email))
             throw new Exception("Email claim not found.");
-
         var user = await _userRepository.GetByEmailAsync(email);
         if (user == null)
         {
@@ -67,11 +67,12 @@ public class AuthService : IAuthService
             {
                 Email = email,
                 Name = name ?? "",
+                IsVerify = true,
                 CreatedAt = DateTime.UtcNow
             };
             await _userRepository.CreateAsync(user);
         }
-
+       
         var token = _tokenGenerator.GenerateToken(user.Email, user.Name, user.Id);
         return token;
     }

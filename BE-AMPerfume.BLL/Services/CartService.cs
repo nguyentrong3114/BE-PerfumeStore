@@ -1,24 +1,32 @@
 using AutoMapper;
+using BE_AMPerfume.DAL.Interfaces;
 using Microsoft.AspNetCore.Http;
 public class CartService : ICartService
 {
-    private readonly ICartRepository _cartRepository;
-    private readonly IProductRepository _productRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public CartService(ICartRepository cartRepository, IProductRepository productRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+    public CartService(IMapper mapper, IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork)
     {
-        _cartRepository = cartRepository;
-        _productRepository = productRepository;
+        _unitOfWork = unitOfWork;
         _mapper = mapper;
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public Task AddCartAsync(CartDTO cart)
+    public async Task GenerateCartAsync(CartDTO cart)
     {
-        throw new NotImplementedException();
+        var entity = new Cart
+        {
+            UserId = cart.UserId,
+            CreatedAt = DateTime.UtcNow,
+        };
+
+        await _unitOfWork.CartRepository.GenerateCartAsync(entity);
+        await _unitOfWork.SaveChangesAsync();
     }
+
+
 
     public Task DeleteCartAsync(int id)
     {
@@ -42,7 +50,22 @@ public class CartService : ICartService
 
     public async Task<CartDTO> GetCartByUserIdAsync(int userId)
     {
-        var cart = await _cartRepository.GetCartByUserIdAsync(userId);
+        var cart = await _unitOfWork.CartRepository.GetCartByUserIdAsync(userId);
+
+        if (cart == null)
+        {
+            var newCart = new Cart
+            {
+                UserId = userId,
+                CreatedAt = DateTime.UtcNow,
+            };
+
+            await _unitOfWork.CartRepository.GenerateCartAsync(newCart);
+            await _unitOfWork.SaveChangesAsync(); 
+
+            cart = newCart;
+        }
+
         return _mapper.Map<CartDTO>(cart);
     }
 

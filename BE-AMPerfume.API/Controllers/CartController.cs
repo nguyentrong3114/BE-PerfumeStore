@@ -28,7 +28,6 @@ namespace BE_AMPerfume.API.Controllers
         public async Task<IActionResult> AddProductToCart([FromBody] CRUSCartItemDTO addCartItemDTO)
         {
             var userId = int.Parse(User.FindFirst("id")!.Value);
-
             var cart = await _cartService.GetCartByUserIdAsync(userId);
             if (cart == null)
                 return NotFound("Không tìm thấy giỏ hàng cho người dùng.");
