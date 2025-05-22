@@ -15,6 +15,8 @@ public class AMPerfumeDbContext : DbContext
     public DbSet<Cart> Carts => Set<Cart>();
     public DbSet<CartItems> CartItems => Set<CartItems>();
     public DbSet<Brand> Brands => Set<Brand>();
+    public DbSet<Payment> Payments => Set<Payment>();
+
 
     // Nếu có thêm:
     // public DbSet<Category> Categories => Set<Category>();
@@ -44,6 +46,5 @@ public class AMPerfumeDbContext : DbContext
             .HasOne(u => u.Cart)
             .WithOne(c => c.User)
             .HasForeignKey<Cart>(c => c.UserId);
-
     }
 }

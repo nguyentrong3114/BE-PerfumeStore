@@ -6,7 +6,7 @@ namespace BE_AMPerfume.DAL.Interfaces
     {
         IProductRepository ProductRepository { get; }
         IUserRepository UserRepository { get; }
-
+        IPaymentRepository PaymentRepository { get; }
         ICartItemRepository CartItemsRepository { get; }
         ICartRepository CartRepository { get; }
 

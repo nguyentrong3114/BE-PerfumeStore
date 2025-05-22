@@ -15,19 +15,21 @@ namespace BE_AMPerfume.DAL.Repositories
 
         public ICartRepository CartRepository { get; }
 
-
+        public IPaymentRepository PaymentRepository{ get; }
         public UnitOfWork(
             AMPerfumeDbContext context,
             IProductRepository productRepository,
             ICartRepository cartRepository,
             ICartItemRepository cartItemsRepository,
-            IUserRepository userRepository)
-         {
+            IUserRepository userRepository,
+            IPaymentRepository paymentRepository)
+        {
             _context = context;
             CartRepository = cartRepository;
             CartItemsRepository = cartItemsRepository;
             ProductRepository = productRepository;
             UserRepository = userRepository;
+            PaymentRepository = paymentRepository;
         }
 
         public Task<int> SaveChangesAsync()
