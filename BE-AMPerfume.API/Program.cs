@@ -51,6 +51,7 @@ builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<ICartItemRepository, CartItemsRepository>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IPaymentDetailService, PaymentDetailService>();
 //Service
 
 builder.Services.AddScoped<IUserService, UserService>();
@@ -60,6 +61,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ICartItemService, CartItemService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+builder.Services.AddScoped<IPaymentDetailRepository, PaymentDetailRepostitory>();
 
 
 builder.Services.AddSingleton<JwtTokenGenerator>();
@@ -98,7 +100,7 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = jwtSettings["Issuer"],
         ValidAudience = jwtSettings["Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    )),
         ClockSkew = TimeSpan.Zero,
         NameClaimType = ClaimTypes.Email
     };

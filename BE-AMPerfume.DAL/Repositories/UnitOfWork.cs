@@ -1,5 +1,6 @@
 using BE_AMPerfume.DAL.Data;
 using BE_AMPerfume.DAL.Interfaces;
+using Microsoft.EntityFrameworkCore.Storage;
 using System.Threading.Tasks;
 
 namespace BE_AMPerfume.DAL.Repositories
@@ -11,18 +12,25 @@ namespace BE_AMPerfume.DAL.Repositories
         public IProductRepository ProductRepository { get; }
         public IUserRepository UserRepository { get; }
 
-        public ICartItemRepository CartItemsRepository{ get; }
+        public ICartItemRepository CartItemsRepository { get; }
 
         public ICartRepository CartRepository { get; }
 
-        public IPaymentRepository PaymentRepository{ get; }
+        public IPaymentRepository PaymentRepository { get; }
+
+        public IPaymentDetailRepository PaymentDetailRepostitory { get; }
+        public Task<IDbContextTransaction> BeginTransactionAsync()
+        {
+            return _context.Database.BeginTransactionAsync();
+        }
         public UnitOfWork(
             AMPerfumeDbContext context,
             IProductRepository productRepository,
             ICartRepository cartRepository,
             ICartItemRepository cartItemsRepository,
             IUserRepository userRepository,
-            IPaymentRepository paymentRepository)
+            IPaymentRepository paymentRepository,
+            IPaymentDetailRepository paymentDetailRepository)
         {
             _context = context;
             CartRepository = cartRepository;
@@ -30,6 +38,7 @@ namespace BE_AMPerfume.DAL.Repositories
             ProductRepository = productRepository;
             UserRepository = userRepository;
             PaymentRepository = paymentRepository;
+            PaymentDetailRepostitory = paymentDetailRepository;
         }
 
         public Task<int> SaveChangesAsync()

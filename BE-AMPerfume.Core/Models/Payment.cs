@@ -41,4 +41,6 @@ public class Payment
     public string Status { get; set; } = "Pending";
 
     public string? CancelReason { get; set; }
+    public virtual ICollection<PaymentDetail> Items { get; set; } = new List<PaymentDetail>();
+
 }

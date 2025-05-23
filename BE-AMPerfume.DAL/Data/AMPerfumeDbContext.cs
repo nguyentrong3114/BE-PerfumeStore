@@ -17,7 +17,7 @@ public class AMPerfumeDbContext : DbContext
     public DbSet<Brand> Brands => Set<Brand>();
     public DbSet<Payment> Payments => Set<Payment>();
 
-
+    public DbSet<PaymentDetail> PaymentDetails => Set<PaymentDetail>();
     // Nếu có thêm:
     // public DbSet<Category> Categories => Set<Category>();
     // public DbSet<Note> Notes => Set<Note>();
@@ -36,11 +36,6 @@ public class AMPerfumeDbContext : DbContext
             .HasMany(p => p.ProductImages)
             .WithOne(pi => pi.Product)
             .HasForeignKey(pi => pi.ProductId)
-            .OnDelete(DeleteBehavior.Cascade);
-        modelBuilder.Entity<Product>()
-            .HasMany(p => p.Variants)
-            .WithOne(v => v.Product)
-            .HasForeignKey(v => v.ProductId)
             .OnDelete(DeleteBehavior.Cascade);
         modelBuilder.Entity<User>()
             .HasOne(u => u.Cart)

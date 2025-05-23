@@ -8,6 +8,7 @@ public class ProductVariant
     public Product Product { get; set; } = null!;
     public string Size { get; set; } = null!;
     public decimal Price { get; set; }
+    public decimal? NewPrice { get; set; }
     public int Quantity { get; set; }
     public bool IsAvailable { get; set; } = true;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

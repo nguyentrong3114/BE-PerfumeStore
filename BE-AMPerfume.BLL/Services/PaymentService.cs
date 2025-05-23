@@ -14,30 +14,58 @@ public class PaymentService : IPaymentService
     {
         throw new NotImplementedException();
     }
-
-    public async Task CreatePaymentAsync(int userId, PaymentDTO paymentDTO)
+    public async Task<int> CreatePaymentWithDetailsAsync(int userId, PaymentDTO paymentDTO, List<PaymentDetailDTO> paymentDetails)
     {
-        var cart = await _unitOfWork.CartRepository.GetCartByUserIdAsync(userId);
-        int cartId = cart.Id;
-        var shippingFee = paymentDTO.ShippingFee;
-        var payment = new Payment
+        using var transaction = await _unitOfWork.BeginTransactionAsync();
+        try
         {
-            CartId = cartId,
-            FullName = paymentDTO.FullName,
-            Address = paymentDTO.Address ?? string.Empty,
-            Email = paymentDTO.Email,
-            Status = "Pending",
-            Method = paymentDTO.Method ?? "COD",
-            Amount = paymentDTO.Amount,
-            TotalAmount = 0,
-            ShippingFee = shippingFee,
-            IsPaid = false,
-            PaidAt = null,
-            TransactionCode = null,
-            CancelReason = "Chưa Có",
-        };
-        await _unitOfWork.PaymentRepository.AddAsync(payment);
-        await _unitOfWork.SaveChangesAsync();
+            var cart = await _unitOfWork.CartRepository.GetCartByUserIdAsync(userId);
+            int cartId = cart.Id;
+            var shippingFee = paymentDTO.ShippingFee;
+
+            var payment = new Payment
+            {
+                CartId = cartId,
+                FullName = paymentDTO.FullName,
+                Address = paymentDTO.Address ?? string.Empty,
+                Email = paymentDTO.Email,
+                Status = "Pending",
+                Method = paymentDTO.Method ?? "COD",
+                Amount = paymentDTO.Amount,
+                TotalAmount = 0,
+                ShippingFee = shippingFee,
+                IsPaid = false,
+                PaidAt = null,
+                TransactionCode = null,
+                CancelReason = "Chưa Có",
+            };
+
+            await _unitOfWork.PaymentRepository.AddAsync(payment);
+            await _unitOfWork.SaveChangesAsync();
+
+            foreach (var detail in paymentDetails)
+            {
+                var entity = new PaymentDetail
+                {
+                    PaymentId = payment.Id,
+                    ProductVariantId = detail.ProductVariantId,
+                    Quantity = detail.Quantity,
+                    Price = detail.Price,
+                };
+
+                await _unitOfWork.PaymentDetailRepostitory.Add(entity);
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return payment.Id;
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
     public Task DeleteAsync(int paymentId)

@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace BE_AMPerfume.DAL.Interfaces
 {
@@ -9,7 +10,8 @@ namespace BE_AMPerfume.DAL.Interfaces
         IPaymentRepository PaymentRepository { get; }
         ICartItemRepository CartItemsRepository { get; }
         ICartRepository CartRepository { get; }
-
+        IPaymentDetailRepository PaymentDetailRepostitory { get; }
+        Task<IDbContextTransaction> BeginTransactionAsync();
         Task<int> SaveChangesAsync();
     }
 }
