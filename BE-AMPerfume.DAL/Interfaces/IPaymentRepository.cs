@@ -11,5 +11,8 @@ namespace BE_AMPerfume.DAL.Interfaces
         Task AddAsync(Payment payment);
         Task UpdateAsync(Payment payment);
         Task DeleteAsync(int id);
+        //Admin
+
+        Task<IEnumerable<Payment>> GetAllPaymentAdmin();
     }
 }

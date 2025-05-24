@@ -10,10 +10,10 @@ public interface IUserRepository
     Task<User?> GetByEmailAsync(string email);   //check exists
     Task<bool> UpdatePasswordAsync(string email, string passwordHash, string newPasswordHash); //update password
     Task<bool> UpdateAsync(User user);
+    Task CreateAsync(User user); //register
 
     //Admin
     Task<IEnumerable<User>> GetAllAsync();
-    
 
-    Task CreateAsync(User user); //register
+
 }

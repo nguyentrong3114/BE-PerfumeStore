@@ -59,6 +59,21 @@ public class ProductRepository : IProductRepository
         return await query.ToListAsync();
     }
 
+    public async Task<IEnumerable<Product>> GetAllProductsAdmin()
+    {
+        var product = await _context.Products
+            .Include(p => p.ProductImages)
+            .Include(p => p.Brand)
+            .Include(p => p.Category)
+            .Include(p => p.Variants)
+            .ToListAsync();
+
+        if (product == null)
+            throw new InvalidOperationException($"Error or no products");
+
+        return product;
+    }
+
     public async Task<Product> GetProductByIdAsync(int id)
     {
         var product = await _context.Products

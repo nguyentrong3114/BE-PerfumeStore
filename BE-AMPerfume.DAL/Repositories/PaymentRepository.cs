@@ -19,6 +19,7 @@ public class PaymentRepository : IPaymentRepository
         throw new NotImplementedException();
     }
 
+
     public Task<Payment?> GetByCartIdAsync(int cartId)
     {
         throw new NotImplementedException();
@@ -38,4 +39,11 @@ public class PaymentRepository : IPaymentRepository
     {
         throw new NotImplementedException();
     }
+
+    //Admin
+    public Task<IEnumerable<Payment>> GetAllPaymentAdmin()
+    {
+        throw new NotImplementedException();
+    }
+
 }

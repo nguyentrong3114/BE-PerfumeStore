@@ -10,4 +10,6 @@ public interface IProductRepository
     Task AddProductAsync(Product product);
     Task UpdateProductAsync(Product product);
     Task DeleteProductAsync(int id);
+    //Admin
+    Task<IEnumerable<Product>> GetAllProductsAdmin(); 
 }

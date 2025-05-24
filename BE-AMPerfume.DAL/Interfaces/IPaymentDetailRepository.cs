@@ -1,4 +1,6 @@
 
+using BE_AMPerfume.Core.Models;
+
 public interface IPaymentDetailRepository
 {
     // Add a new payment detail
@@ -15,4 +17,6 @@ public interface IPaymentDetailRepository
 
     // Delete a payment detail by its ID
     void Delete(int id);
+
+
 }

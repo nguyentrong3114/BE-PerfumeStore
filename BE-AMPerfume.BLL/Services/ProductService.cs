@@ -24,6 +24,21 @@ public class ProductService : IProductService
         throw new NotImplementedException();
     }
 
+    public async Task<PagedResult<ProductDetailDTO>> GetAllProductAdminAsync(int page, int size)
+    {
+        var product = await _unitOfWork.ProductRepository.GetAllProductsAdmin();
+        var dtos = _mapper.Map<List<ProductDetailDTO>>(product);
+
+        return new PagedResult<ProductDetailDTO>
+        {
+            Items = dtos,
+            PageNumber = page,
+            PageSize = size,
+            TotalItems = product.Count()
+        };
+
+    }
+
     public async Task<List<ProductDTO>> GetAllProductAsync(string? gender, string? brand, decimal? priceMin, decimal? priceMax, string? notes)
     {
         var products = await _unitOfWork.ProductRepository.GetAllProductAsync(gender, brand, priceMin, priceMax, notes);
