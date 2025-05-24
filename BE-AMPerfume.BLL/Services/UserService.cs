@@ -7,20 +7,20 @@ using System.Text;
 
 public class UserService : IUserService
 {
-    private readonly IUserRepository _repository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly IEmailService _emailService;
 
-    public UserService(IUserRepository repository, IMapper mapper, IEmailService emailService)
+    public UserService(IUnitOfWork unitOfWork, IMapper mapper, IEmailService emailService)
     {
-        _repository = repository;
+        _unitOfWork = unitOfWork;
         _mapper = mapper;
         _emailService = emailService;
     }
 
     public async Task<AuthResponseDTO> RegisterAsync(RegisterDTO dto)
     {
-        var existingUser = await _repository.GetByEmailAsync(dto.Email);
+        var existingUser = await _unitOfWork.UserRepository.GetByEmailAsync(dto.Email);
         if (existingUser != null)
         {
             return new AuthResponseDTO
@@ -54,11 +54,12 @@ public class UserService : IUserService
             Email = dto.Email,
             PasswordHash = HashPassword(dto.Password),
             IsVerify = false,
+            Role = "User",
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         };
 
-        await _repository.CreateAsync(newUser);
+        await _unitOfWork.UserRepository.CreateAsync(newUser);
 
         var otp = new Random().Next(100000, 999999).ToString();
         await _emailService.SaveOtpAsync(dto.Email, otp);
@@ -71,12 +72,6 @@ public class UserService : IUserService
         };
     }
 
-    public async Task<IEnumerable<UserDTO>> GetAllAsync()
-    {
-        var users = await _repository.GetAllAsync();
-        return _mapper.Map<IEnumerable<UserDTO>>(users);
-    }
-
     private string HashPassword(string password)
     {
         using var sha256 = SHA256.Create();
@@ -85,41 +80,41 @@ public class UserService : IUserService
         return Convert.ToBase64String(hash);
     }
 
-    public async Task<UserDTO?> GetUserAsync(string email)
-    {
-        if (string.IsNullOrWhiteSpace(email))
-            return null;
-
-        var existingUser = await _repository.GetByEmailAsync(email);
-        if (existingUser == null)
-            return null;
-
-        return new UserDTO
-        {
-            Email = existingUser.Email,
-            FullName = existingUser.Name,
-            Address = existingUser.Address,
-            CreatedAt = existingUser.CreatedAt,
-            UpdatedAt = existingUser.UpdatedAt,
-        };
-    }
 
     public async Task<bool?> ChangePasswordAsync(string email, ChangePasswordDTO dto)
     {
         string oldPasswordHash = HashPassword(dto.OldPassword);
         string newPasswordHash = HashPassword(dto.NewPassword);
 
-        return await _repository.UpdatePasswordAsync(email, oldPasswordHash, newPasswordHash);
+        return await _unitOfWork.UserRepository.UpdatePasswordAsync(email, oldPasswordHash, newPasswordHash);
     }
     public async Task<bool> MarkUserAsVerifiedAsync(string email)
     {
-        var user = await _repository.GetByEmailAsync(email);
+        var user = await _unitOfWork.UserRepository.GetByEmailAsync(email);
         if (user == null || user.IsVerify) return false;
 
         user.IsVerify = true;
         user.UpdatedAt = DateTime.UtcNow;
-        await _repository.UpdateAsync(user);
+        await _unitOfWork.UserRepository.UpdateAsync(user);
         return true;
     }
 
+    public Task<UserDTO> GetUserAsync(string email)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<PagedResult<UserDTO>> GetAllAsync(int page, int size)
+    {
+        var users = await _unitOfWork.UserRepository.GetAllAsync();
+        var dtos = _mapper.Map<List<UserDTO>>(users);
+
+        return new PagedResult<UserDTO>
+        {
+            Items = dtos,
+            PageNumber = page,
+            PageSize = size,
+            TotalItems = users.Count()
+        };
+    }
 }

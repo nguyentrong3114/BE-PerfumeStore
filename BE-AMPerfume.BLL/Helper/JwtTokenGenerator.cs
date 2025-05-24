@@ -16,7 +16,7 @@ namespace BE_AMPerfume.BLL.Helpers
             _configuration = configuration;
         }
 
-        public string GenerateToken(string email, string fullName,int userId)
+        public string GenerateToken(string email, string fullName, int userId, string role)
         {
             var jwtSection = _configuration.GetSection("Jwt");
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSection["Key"]!));
@@ -26,8 +26,9 @@ namespace BE_AMPerfume.BLL.Helpers
             var claims = new[]
             {
                 new Claim(ClaimTypes.Email, email),
-                new Claim("id",userId.ToString()),
+                new Claim("id", userId.ToString()),
                 new Claim("FullName", fullName),
+                new Claim(ClaimTypes.Role, role),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 

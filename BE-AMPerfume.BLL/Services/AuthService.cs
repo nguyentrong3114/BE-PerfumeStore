@@ -24,7 +24,7 @@ public class AuthService : IAuthService
 
         if (user == null) return null;
 
-        var token = _tokenGenerator.GenerateToken(user.Email, user.Name, user.Id);
+        var token = _tokenGenerator.GenerateToken(user.Email, user.Name, user.Id,user.Role);
         return new AuthResponseDTO
         {
             FullName = user.Name,
@@ -68,12 +68,13 @@ public class AuthService : IAuthService
                 Email = email,
                 Name = name ?? "",
                 IsVerify = true,
+                Role = "User",
                 CreatedAt = DateTime.UtcNow
             };
             await _userRepository.CreateAsync(user);
         }
        
-        var token = _tokenGenerator.GenerateToken(user.Email, user.Name, user.Id);
+        var token = _tokenGenerator.GenerateToken(user.Email, user.Name, user.Id,user.Role);
         return token;
     }
 
