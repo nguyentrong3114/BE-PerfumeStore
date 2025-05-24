@@ -11,5 +11,6 @@ public class AutoMapperPayment : Profile
         CreateMap<Payment, PaymentDisplayDTO>()
         .ForMember(dest => dest.TotalAmount,
                     opt => opt.MapFrom(src => src.Amount + src.ShippingFee));
+        CreateMap<PaymentDetail, PaymentDetailDTO>();
     }
 }

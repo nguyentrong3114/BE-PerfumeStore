@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using BE_AMPerfume.Core.DTOs;
+using BE_AMPerfume.Core.Models;
 
 namespace BE_AMPerfume.BLL.Interfaces
 {
@@ -28,5 +29,9 @@ namespace BE_AMPerfume.BLL.Interfaces
         /// Xoá payment (nếu đơn bị huỷ và rollback)
         /// </summary>
         Task DeleteAsync(int paymentId);
+
+        //Admin
+
+        Task<PagedResult<PaymentDisplayDTO>> GetAllOrderAdminAsync(int page, int size);
     }
 }

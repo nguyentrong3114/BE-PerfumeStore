@@ -13,5 +13,6 @@ namespace BE_AMPerfume.Core.DTOs
         public decimal Price { get; set; }
 
         public decimal TotalPrice => Quantity * Price;
+
     }
 }

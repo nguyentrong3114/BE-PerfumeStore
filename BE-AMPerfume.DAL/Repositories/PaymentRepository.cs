@@ -1,6 +1,7 @@
 using BE_AMPerfume.Core.Models;
 using BE_AMPerfume.DAL.Data;
 using BE_AMPerfume.DAL.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 public class PaymentRepository : IPaymentRepository
 {
@@ -41,9 +42,14 @@ public class PaymentRepository : IPaymentRepository
     }
 
     //Admin
-    public Task<IEnumerable<Payment>> GetAllPaymentAdmin()
+    public async Task<IEnumerable<Payment>> GetAllPaymentAdmin()
     {
-        throw new NotImplementedException();
+        var orders = await _context.Payments
+        .ToListAsync();
+        if (orders == null)
+            throw new InvalidOperationException($"Error or no products");
+
+        return orders;
     }
 
 }
