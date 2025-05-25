@@ -11,6 +11,7 @@ namespace BE_AMPerfume.DAL.Interfaces
         ICartItemRepository CartItemsRepository { get; }
         ICartRepository CartRepository { get; }
         IPaymentDetailRepository PaymentDetailRepostitory { get; }
+        IAnalyticsRepository AnalyticsRepository{ get; }
         Task<IDbContextTransaction> BeginTransactionAsync();
         Task<int> SaveChangesAsync();
     }
