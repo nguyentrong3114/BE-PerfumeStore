@@ -100,9 +100,25 @@ public class ProductRepository : IProductRepository
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<Product>> SearchProductsAsync(string searchTerm)
+    public async Task<List<Product>> SearchAsync(string keyword)
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrWhiteSpace(keyword))
+            return new List<Product>();
+
+        keyword = keyword.Trim().ToLower();
+
+        var products = await _context.Products
+            .Where(p => p.Name.ToLower().Contains(keyword))
+            .Include(p => p.ProductImages)
+            .ToListAsync();
+
+        foreach (var product in products)
+        {
+            product.ProductImages = product.ProductImages
+                .Where(img => img.IsThumbnail)
+                .ToList();
+        }
+        return products;
     }
 
     public Task UpdateProductAsync(Product product)

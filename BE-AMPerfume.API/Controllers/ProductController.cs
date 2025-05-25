@@ -5,7 +5,7 @@ namespace BE_AMPerfume.API.Controllers
     using Microsoft.AspNetCore.Mvc;
 
     [Route("api/products")]
-    
+
     [ApiController]
     public class ProductController : ControllerBase
     {
@@ -40,5 +40,19 @@ namespace BE_AMPerfume.API.Controllers
                 return NotFound();
             return Ok(product);
         }
+        [HttpGet("search")]
+        public async Task<IActionResult> Search([FromQuery] string query)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+                return BadRequest("Từ khóa tìm kiếm không được để trống.");
+
+            var products = await _productService.GetProductBySearch(query);
+
+            if (products == null || !products.Any())
+                return NotFound("Không tìm thấy sản phẩm nào.");
+
+            return Ok(products);
+        }
+
     }
 }

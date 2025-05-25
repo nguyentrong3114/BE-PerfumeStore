@@ -6,6 +6,8 @@ public interface IProductService
     Task<ProductDTO> UpdateAsync(int id, ProductDTO productDto);
     Task<bool> DeleteAsync(int id);
 
+    Task<List<ProductDTO>> GetProductBySearch(string keyword);
+
     //Admin
     Task<PagedResult<ProductDetailDTO>> GetAllProductAdminAsync(int page, int size);
 }

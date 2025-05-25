@@ -51,6 +51,12 @@ public class ProductService : IProductService
         return _mapper.Map<ProductDetailDTO>(product);
     }
 
+    public async Task<List<ProductDTO>> GetProductBySearch(string keyword)
+    {
+        var product = await _unitOfWork.ProductRepository.SearchAsync(keyword);
+        return _mapper.Map<List<ProductDTO>>(product);
+    }
+
     public Task<ProductDTO> UpdateAsync(int id, ProductDTO productDto)
     {
         throw new NotImplementedException();
