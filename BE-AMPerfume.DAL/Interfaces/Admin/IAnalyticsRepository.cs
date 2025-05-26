@@ -1,7 +1,8 @@
 public interface IAnalyticsRepository
 {
-    Task<decimal> TotalSales(int? day, int? month, int? year);
-    Task<decimal> TotalIncome(int? day, int? month, int? year);
-    Task<decimal> TotalOrder(int? day, int? month, int? year);
-    Task<int> TotalUser(int? day, int? month, int? year);  
+    Task<decimal> TotalIncome(DateTime? start, DateTime? end);
+    Task<decimal> TotalSales(DateTime? start, DateTime? end);
+    Task<decimal> TotalOrder(DateTime? start, DateTime? end);
+    Task<int> TotalUser(DateTime? start, DateTime? end);
+
 }

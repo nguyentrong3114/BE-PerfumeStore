@@ -1,15 +1,9 @@
 public interface IAnalyticsService
 {
-    // Tổng doanh thu trong ngày
-    Task<decimal> GetTotalIncomeAsync(int day, int month, int year);
+    Task<decimal> GetTotalIncomeAsync(DateTime? start, DateTime? end);
+    Task<decimal> GetTotalOrdersAsync(DateTime? start, DateTime? end);
+    Task<int> GetTotalUsersAsync(DateTime? start, DateTime? end);
+    Task<decimal> GetTotalProductsSoldAsync(DateTime? start, DateTime? end);
 
-    // Tổng đơn hàng trong ngày
-    Task<decimal> GetTotalOrdersAsync(int day, int month, int year);
-
-    // Tổng người dùng đăng ký trong ngày
-    Task<int> GetTotalUsersAsync(int day, int month, int year);
-
-    // Tổng sản phẩm đã bán ra trong ngày
-    Task<decimal> GetTotalProductsSoldAsync(int day, int month, int year);
-    Task<AnalyticsDTO> GetDashboardAnalyticsAsync(int? day, int? month, int? year);
+    Task<AnalyticsDTO> GetDashboardAnalyticsAsync(DateTime? start, DateTime? end);
 }

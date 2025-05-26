@@ -8,42 +8,40 @@ public class AnalyticsService : IAnalyticsService
     {
         _unitOfWork = unitOfWork;
     }
-    public Task<decimal> GetTotalIncomeAsync(int day, int month, int year)
+
+    public async Task<decimal> GetTotalIncomeAsync(DateTime? start, DateTime? end)
     {
-        var result = _unitOfWork.AnalyticsRepository.TotalIncome(day, month, year);
+        var result = await _unitOfWork.AnalyticsRepository.TotalIncome(start, end);
         return result;
     }
 
-    public Task<decimal> GetTotalOrdersAsync(int day, int month, int year)
+    public async Task<decimal> GetTotalOrdersAsync(DateTime? start, DateTime? end)
     {
-        var result = _unitOfWork.AnalyticsRepository.TotalOrder(day, month, year);
-        return result;
+        return await _unitOfWork.AnalyticsRepository.TotalOrder(start, end);
     }
 
-    public Task<decimal> GetTotalProductsSoldAsync(int day, int month, int year)
+    public async Task<int> GetTotalUsersAsync(DateTime? start, DateTime? end)
     {
-        var result = _unitOfWork.AnalyticsRepository.TotalSales(day, month, year);
-        return result;
+        return await _unitOfWork.AnalyticsRepository.TotalUser(start, end);
     }
 
-    public Task<int> GetTotalUsersAsync(int day, int month, int year)
+    public async Task<decimal> GetTotalProductsSoldAsync(DateTime? start, DateTime? end)
     {
-        var result = _unitOfWork.AnalyticsRepository.TotalUser(day, month, year);
-        return result;
+        return await _unitOfWork.AnalyticsRepository.TotalSales(start, end);
     }
-    public async Task<AnalyticsDTO> GetDashboardAnalyticsAsync(int? day, int? month, int? year)
+    public async Task<AnalyticsDTO> GetDashboardAnalyticsAsync(DateTime? start, DateTime? end)
     {
-        var totalIncome = await _unitOfWork.AnalyticsRepository.TotalIncome(day, month, year);
-        var totalOrders = await _unitOfWork.AnalyticsRepository.TotalOrder(day, month, year);
-        var totalSales = await _unitOfWork.AnalyticsRepository.TotalSales(day, month, year);
-        var totalUsers = await _unitOfWork.AnalyticsRepository.TotalUser(day, month, year);
+        var income = await GetTotalIncomeAsync(start, end);
+        var orders = await GetTotalOrdersAsync(start, end);
+        var users = await GetTotalUsersAsync(start, end);
+        var productsSold = await GetTotalProductsSoldAsync(start, end);
 
         return new AnalyticsDTO
         {
-            TotalIncome = totalIncome,
-            TotalOrder = totalOrders,
-            TotalSales = totalSales,
-            TotalUser = totalUsers
+            TotalIncome = income,
+            TotalOrders = orders,
+            TotalUsers = users,
+            TotalProductsSold = productsSold
         };
     }
 
