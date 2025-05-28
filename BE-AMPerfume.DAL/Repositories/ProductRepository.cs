@@ -22,7 +22,7 @@ public class ProductRepository : IProductRepository
     }
 
     public async Task<List<Product>> GetAllProductAsync(
-        string? gender = null,
+        string? categorySlug = null,
         string? brand = null,
         decimal? priceMin = null,
         decimal? priceMax = null,
@@ -37,10 +37,21 @@ public class ProductRepository : IProductRepository
             .Include(p => p.Variants)
             .AsQueryable();
 
-        if (!string.IsNullOrEmpty(gender))
-            query = query.Where(p => p.Gender == gender);
+        // 🔍 Tìm categoryId từ slug
+        int? categoryId = null;
+        if (!string.IsNullOrEmpty(categorySlug) && categorySlug.ToLower() != "all")
+        {
+            categoryId = await _context.Categories
+                .Where(c => c.Slug == categorySlug)
+                .Select(c => (int?)c.Id)
+                .FirstOrDefaultAsync();
+            if (categoryId == null)
+                return new List<Product>();
+        }
+        if (categoryId.HasValue)
+            query = query.Where(p => p.CategoryId == categoryId.Value);
 
-        if (!string.IsNullOrEmpty(brand))
+        if (!string.IsNullOrEmpty(brand) && brand.ToLower() != "all")
             query = query.Where(p => p.Brand.Name == brand);
 
         if (priceMin.HasValue)
@@ -49,7 +60,7 @@ public class ProductRepository : IProductRepository
         if (priceMax.HasValue)
             query = query.Where(p => p.Variants.Any(v => v.Price <= priceMax.Value));
 
-        if (!string.IsNullOrEmpty(notes))
+        if (!string.IsNullOrEmpty(notes) && notes.ToLower() != "all")
             query = query.Where(p =>
                 p.Notes.Top.Contains(notes) ||
                 p.Notes.Middle.Contains(notes) ||
@@ -58,6 +69,7 @@ public class ProductRepository : IProductRepository
 
         return await query.ToListAsync();
     }
+
 
     public async Task<IEnumerable<Product>> GetAllProductsAdmin()
     {

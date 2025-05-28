@@ -39,9 +39,9 @@ public class ProductService : IProductService
 
     }
 
-    public async Task<List<ProductDTO>> GetAllProductAsync(string? gender, string? brand, decimal? priceMin, decimal? priceMax, string? notes)
+    public async Task<List<ProductDTO>> GetAllProductAsync(string? categorySlug, string? brand, decimal? priceMin, decimal? priceMax, string? notes)
     {
-        var products = await _unitOfWork.ProductRepository.GetAllProductAsync(gender, brand, priceMin, priceMax, notes);
+        var products = await _unitOfWork.ProductRepository.GetAllProductAsync(categorySlug, brand, priceMin, priceMax, notes);
         return _mapper.Map<List<ProductDTO>>(products);
     }
 

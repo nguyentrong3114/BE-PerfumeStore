@@ -16,7 +16,7 @@ public class AMPerfumeDbContext : DbContext
     public DbSet<CartItems> CartItems => Set<CartItems>();
     public DbSet<Brand> Brands => Set<Brand>();
     public DbSet<Payment> Payments => Set<Payment>();
-
+    public DbSet<Category> Categories => Set<Category>();
     public DbSet<PaymentDetail> PaymentDetails => Set<PaymentDetail>();
     // Nếu có thêm:
     // public DbSet<Category> Categories => Set<Category>();

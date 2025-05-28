@@ -6,4 +6,10 @@ public interface IAnalyticsService
     Task<decimal> GetTotalProductsSoldAsync(DateTime? start, DateTime? end);
 
     Task<AnalyticsDTO> GetDashboardAnalyticsAsync(DateTime? start, DateTime? end);
+
+    //Chart
+    Task<List<MonthlyRevenueDTO>> GetMonthlyRevenueAsync(int? year = null);
+    Task<List<MonthProductDTO>> GetMonthlyProductAsync(int? year = null);
+    Task<List<MonthTotalUserDTO>> GetMonthlyUserAsync(int? year = null);
+    Task<List<MonthBrandDTO>> GetMonthlyBrandAsync(int? year = null);
 }

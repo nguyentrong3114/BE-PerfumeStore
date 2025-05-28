@@ -21,13 +21,13 @@ namespace BE_AMPerfume.API.Controllers
         // GET /api/products
         [HttpGet]
         public async Task<IActionResult> GetAllProducts(
-            [FromQuery] string? gender = null,
+            [FromQuery] string? categorySlug = null,
             [FromQuery] string? brand = null,
             [FromQuery] decimal? minPrice = null,
             [FromQuery] decimal? maxPrice = null,
             [FromQuery] string? sortBy = null)
         {
-            var products = await _productService.GetAllProductAsync(gender, brand, minPrice, maxPrice, sortBy);
+            var products = await _productService.GetAllProductAsync(categorySlug, brand, minPrice, maxPrice, sortBy);
             return Ok(products);
         }
 

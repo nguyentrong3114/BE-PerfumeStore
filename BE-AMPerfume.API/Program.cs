@@ -53,6 +53,7 @@ builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IPaymentDetailService, PaymentDetailService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 //Service
 
 builder.Services.AddScoped<IUserService, UserService>();
@@ -64,7 +65,7 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IPaymentDetailRepository, PaymentDetailRepostitory>();
 builder.Services.AddScoped<IAnalyticsRepository, AnalyticsRepository>();
-
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 builder.Services.AddSingleton<JwtTokenGenerator>();
 builder.Services.AddHttpContextAccessor();

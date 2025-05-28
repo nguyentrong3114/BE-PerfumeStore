@@ -10,7 +10,6 @@ public class Product
     public string? Scent { get; set; }
     public int? star { get; set; } = 5;
     public string? Description { get; set; }
-    public string Gender { get; set; } = null!;
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;

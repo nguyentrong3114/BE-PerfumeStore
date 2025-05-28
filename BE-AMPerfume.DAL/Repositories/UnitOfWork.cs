@@ -19,12 +19,14 @@ namespace BE_AMPerfume.DAL.Repositories
         public IPaymentRepository PaymentRepository { get; }
         public IAnalyticsRepository AnalyticsRepository{ get; }
         public IPaymentDetailRepository PaymentDetailRepostitory { get; }
+        public ICategoryRepository CategoryRepository { get; }
         public Task<IDbContextTransaction> BeginTransactionAsync()
         {
             return _context.Database.BeginTransactionAsync();
         }
         public UnitOfWork(
             AMPerfumeDbContext context,
+            ICategoryRepository categoryRepository,
             IAnalyticsRepository analyticsRepository,
             IProductRepository productRepository,
             ICartRepository cartRepository,
@@ -34,6 +36,7 @@ namespace BE_AMPerfume.DAL.Repositories
             IPaymentDetailRepository paymentDetailRepository)
         {
             _context = context;
+            CategoryRepository = categoryRepository;
             AnalyticsRepository = analyticsRepository;
             CartRepository = cartRepository;
             CartItemsRepository = cartItemsRepository;
