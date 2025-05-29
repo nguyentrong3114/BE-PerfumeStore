@@ -24,13 +24,66 @@ public class PaymentService : IPaymentService
         {
             var cart = await _unitOfWork.CartRepository.GetCartByUserIdAsync(userId);
             int cartId = cart != null ? cart.Id : 0;
-            
+
             var shippingFee = paymentDTO.ShippingFee;
 
             var payment = new Payment
             {
-                OrderCode =$"ORD{DateTime.UtcNow:yyyyMMddHHmmss}-{Random.Shared.Next(1000, 9999)}",
+                OrderCode = $"ORD{DateTime.UtcNow:yyyyMMddHHmmss}-{Random.Shared.Next(1000, 9999)}",
                 CartId = cartId,
+                FullName = paymentDTO.FullName,
+                Address = paymentDTO.Address ?? string.Empty,
+                Email = paymentDTO.Email,
+                Status = "Pending",
+                Method = paymentDTO.Method ?? "COD",
+                Amount = paymentDTO.Amount,
+                TotalAmount = 0,
+                ShippingFee = shippingFee,
+                IsPaid = false,
+                PaidAt = null,
+                TransactionCode = null,
+                CancelReason = "Chưa Có",
+            };
+
+            await _unitOfWork.PaymentRepository.AddAsync(payment);
+            await _unitOfWork.SaveChangesAsync();
+
+            foreach (var detail in paymentDetails)
+            {
+                var entity = new PaymentDetail
+                {
+                    PaymentId = payment.Id,
+                    ProductVariantId = detail.ProductVariantId,
+                    Quantity = detail.Quantity,
+                    Price = detail.Price,
+                };
+
+                await _unitOfWork.PaymentDetailRepostitory.Add(entity);
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return payment.Id;
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+    }
+
+    public async Task<int> CreatePaymenWithDetailsByUnknowAsync(PaymentDTO paymentDTO, List<PaymentDetailDTO> paymentDetails)
+    {
+        using var transaction = await _unitOfWork.BeginTransactionAsync();
+        try
+        {
+            var shippingFee = paymentDTO.ShippingFee;
+
+            var payment = new Payment
+            {
+                OrderCode = $"ORD{DateTime.UtcNow:yyyyMMddHHmmss}-{Random.Shared.Next(1000, 9999)}",
+                CartId = null, // Không có cartId vì là khách lạ
                 FullName = paymentDTO.FullName,
                 Address = paymentDTO.Address ?? string.Empty,
                 Email = paymentDTO.Email,

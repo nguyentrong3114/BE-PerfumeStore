@@ -16,7 +16,7 @@ public class Payment
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
     [Required]
-    public int CartId { get; set; }
+    public int? CartId { get; set; }
 
     [ForeignKey("CartId")]
     public virtual Cart Cart { get; set; }

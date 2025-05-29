@@ -15,6 +15,7 @@ namespace BE_AMPerfume.BLL.Interfaces
         /// Tạo bản ghi thanh toán cho đơn hàng (COD, MoMo, VNPAY...)
         /// </summary>
         Task<int> CreatePaymentWithDetailsAsync(int userId, PaymentDTO paymentDTO, List<PaymentDetailDTO> paymentDetails);
+        Task<int> CreatePaymenWithDetailsByUnknowAsync(PaymentDTO paymentDTO, List<PaymentDetailDTO> paymentDetails);
         /// <summary>
         /// Cập nhật trạng thái đã thanh toán cho đơn hàng
         /// </summary>

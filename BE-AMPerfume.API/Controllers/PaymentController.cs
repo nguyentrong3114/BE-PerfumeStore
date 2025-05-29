@@ -36,7 +36,20 @@ public class PaymentController : Controller
             return StatusCode(500, new { message = "Lỗi khi tạo thanh toán", error = ex.Message });
         }
     }
+    [HttpPost("unknown")]
+    public async Task<IActionResult> CreatePaymentForUnknowUsers([FromBody] CreatePaymentRequestDTO request)
+    {
+        try
+        {
+            var paymentId = await _paymentService.CreatePaymenWithDetailsByUnknowAsync(request.Payment, request.Items);
 
+            return Ok(new { message = "Tạo thanh toán thành công", paymentId });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Lỗi khi tạo thanh toán", error = ex.Message });
+        }
+    }
 
 
 }
