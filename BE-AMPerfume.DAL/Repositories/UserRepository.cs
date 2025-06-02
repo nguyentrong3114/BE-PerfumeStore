@@ -34,7 +34,8 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> GetUserAsync(string email)
     {
-        return await _context.Users.FindAsync(email);
+        return await _context.Users
+            .FirstOrDefaultAsync(u => u.Email == email);
     }
 
     public async Task<bool> UpdatePasswordAsync(string email, string passwordHash, string newPasswordHash)

@@ -15,20 +15,26 @@ public class PaymentRepository : IPaymentRepository
         await _context.Payments.AddAsync(payment);
     }
 
-    public Task DeleteAsync(int id)
+    public async Task DeleteAsync(int id)
     {
-        throw new NotImplementedException();
+        await _context.Payments
+            .Where(p => p.Id == id)
+            .ExecuteDeleteAsync();
     }
 
 
     public Task<Payment?> GetByCartIdAsync(int cartId)
     {
-        throw new NotImplementedException();
+        return _context.Payments
+            .Where(p => p.CartId == cartId)
+            .FirstOrDefaultAsync();
     }
 
-    public Task<Payment?> GetByTransactionCodeAsync(string transactionCode)
+    public Task<Payment?> GetByTransactionCodeAsync(string orderCode)
     {
-        throw new NotImplementedException();
+        return _context.Payments
+            .Where(p => p.OrderCode == orderCode)
+            .FirstOrDefaultAsync();
     }
 
     public Task<Payment?> ShowTransaction(int cartId)
@@ -52,4 +58,11 @@ public class PaymentRepository : IPaymentRepository
         return orders;
     }
 
+    public Task<Payment?> GetOrdersByUserIdAsync(int userId)
+    {
+        return _context.Payments
+            .Include(p => p.Cart)
+            .Where(p => p.Cart.UserId == userId)
+            .FirstOrDefaultAsync();
+    }
 }

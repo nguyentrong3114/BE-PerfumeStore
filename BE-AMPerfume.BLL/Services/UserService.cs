@@ -29,7 +29,6 @@ public class UserService : IUserService
                 Message = "Email đã được sử dụng"
             };
         }
-
         if (string.IsNullOrWhiteSpace(dto.Password))
         {
             return new AuthResponseDTO
@@ -38,7 +37,6 @@ public class UserService : IUserService
                 Message = "Thiếu mật khẩu"
             };
         }
-
         if (dto.Password.Length < 6)
         {
             return new AuthResponseDTO
@@ -47,7 +45,6 @@ public class UserService : IUserService
                 Message = "Mật khẩu phải có ít nhất 6 ký tự"
             };
         }
-
         var newUser = new User
         {
             Name = dto.Name,
@@ -64,7 +61,7 @@ public class UserService : IUserService
         var otp = new Random().Next(100000, 999999).ToString();
         await _emailService.SaveOtpAsync(dto.Email, otp);
         await _emailService.SendVerificationCodeAsync(dto.Email, dto.Name, otp);
-
+        await _unitOfWork.SaveChangesAsync();
         return new AuthResponseDTO
         {
             IsSuccess = true,
@@ -101,7 +98,8 @@ public class UserService : IUserService
 
     public Task<UserDTO> GetUserAsync(string email)
     {
-        throw new NotImplementedException();
+        return _unitOfWork.UserRepository.GetUserAsync(email)
+            .ContinueWith(task => _mapper.Map<UserDTO>(task.Result));
     }
 
     public async Task<PagedResult<UserDTO>> GetAllAsync(int page, int size)

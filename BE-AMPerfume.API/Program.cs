@@ -30,17 +30,20 @@ builder.Services.AddDbContext<AMPerfumeDbContext>(options =>
         ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
     ));
 
-// 2️ Cấu hình CORS cho phép frontend Next.js gọi API
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:3000","http://localhost:5173") // ← frontend origin
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials(); // ← để gửi cookie (JWT)
+        policy.WithOrigins(
+            "http://localhost:3000",
+            "http://localhost:5173"
+        )
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials();
     });
 });
+
 
 // ⬅️ Trước UseAuthentication
 
@@ -103,7 +106,7 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = jwtSettings["Issuer"],
         ValidAudience = jwtSettings["Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    )),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
         ClockSkew = TimeSpan.Zero,
         NameClaimType = ClaimTypes.Email
     };

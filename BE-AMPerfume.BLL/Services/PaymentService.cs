@@ -41,7 +41,6 @@ public class PaymentService : IPaymentService
                 ShippingFee = shippingFee,
                 IsPaid = false,
                 PaidAt = null,
-                TransactionCode = null,
                 CancelReason = "Chưa Có",
             };
 
@@ -94,7 +93,6 @@ public class PaymentService : IPaymentService
                 ShippingFee = shippingFee,
                 IsPaid = false,
                 PaidAt = null,
-                TransactionCode = null,
                 CancelReason = "Chưa Có",
             };
 
@@ -146,10 +144,32 @@ public class PaymentService : IPaymentService
 
     }
 
+    public async Task<List<PaymentDisplayDTO>> GetAllPaymentAByUserIdAsync(int userId)
+    {
+        var payments = await _unitOfWork.PaymentRepository.GetOrdersByUserIdAsync(userId);
+        if (payments == null)
+            return new List<PaymentDisplayDTO>();
+
+        return new List<PaymentDisplayDTO>
+        {
+            _mapper.Map<PaymentDisplayDTO>(payments)
+        };
+    }
+
     public Task<PaymentDTO?> GetByCartIdAsync(int cartId)
     {
         throw new NotImplementedException();
     }
+
+    public async Task<PaymentDisplayDTO?> GetOrderByTransactionCode(string orderCode)
+    {
+        var payments = await _unitOfWork.PaymentRepository.GetByTransactionCodeAsync(orderCode);
+        if (payments == null)
+            return new PaymentDisplayDTO();
+
+        return _mapper.Map<PaymentDisplayDTO>(payments);
+    }
+
 
     public Task<bool> IsPaidAsync(int cartId)
     {

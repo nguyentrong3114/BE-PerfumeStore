@@ -70,7 +70,7 @@ public class UserController : ControllerBase
 
         var otp = new Random().Next(100000, 999999).ToString();
         await _emailService.SaveOtpAsync(email.Email, otp);
-        await _emailService.SendVerificationCodeAsync(email.Email, (string)user.FullName, otp);
+        await _emailService.SendVerificationCodeAsync(email.Email, (string)user.Name, otp);
 
         return Ok("OTP đã được gửi về email.");
     }

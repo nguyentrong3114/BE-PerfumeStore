@@ -4,6 +4,7 @@ using BE_AMPerfume.DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BE_AMPerfume.DAL.Migrations
 {
     [DbContext(typeof(AMPerfumeDbContext))]
-    partial class AMPerfumeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250530035132_UpdateModel1")]
+    partial class UpdateModel1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -70,6 +73,7 @@ namespace BE_AMPerfume.DAL.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<int?>("CartId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -107,6 +111,9 @@ namespace BE_AMPerfume.DAL.Migrations
 
                     b.Property<decimal?>("TotalAmount")
                         .HasColumnType("decimal(65,30)");
+
+                    b.Property<string>("TransactionCode")
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
@@ -307,9 +314,6 @@ namespace BE_AMPerfume.DAL.Migrations
                     b.Property<string>("ImageUrl")
                         .HasColumnType("longtext");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -325,7 +329,7 @@ namespace BE_AMPerfume.DAL.Migrations
 
                     b.HasIndex("ParentId");
 
-                    b.ToTable("categories");
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("Note", b =>
@@ -423,7 +427,9 @@ namespace BE_AMPerfume.DAL.Migrations
                 {
                     b.HasOne("Cart", "Cart")
                         .WithMany()
-                        .HasForeignKey("CartId");
+                        .HasForeignKey("CartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Cart");
                 });

@@ -1,4 +1,5 @@
 
+using BE_AMPerfume.Core.DTOs;
 using BE_AMPerfume.Core.Models;
 
 public interface IPaymentDetailRepository
@@ -8,7 +9,6 @@ public interface IPaymentDetailRepository
 
     // Get a payment detail by its ID
     PaymentDetail GetById(int id);
-
     // Get all payment details
     IEnumerable<PaymentDetail> GetAll();
 

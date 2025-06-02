@@ -34,5 +34,7 @@ namespace BE_AMPerfume.BLL.Interfaces
         //Admin
 
         Task<PagedResult<PaymentDisplayDTO>> GetAllOrderAdminAsync(int page, int size);
+        Task<List<PaymentDisplayDTO>> GetAllPaymentAByUserIdAsync(int userId);
+        Task<PaymentDisplayDTO?> GetOrderByTransactionCode(string orderCode);
     }
 }

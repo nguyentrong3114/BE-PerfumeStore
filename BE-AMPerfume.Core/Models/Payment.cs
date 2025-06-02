@@ -15,7 +15,6 @@ public class Payment
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-    [Required]
     public int? CartId { get; set; }
 
     [ForeignKey("CartId")]
@@ -37,7 +36,6 @@ public class Payment
 
     public DateTime? PaidAt { get; set; }
 
-    public string? TransactionCode { get; set; }
     [Required]
     [StringLength(20)]
     public string Status { get; set; } = "Pending";

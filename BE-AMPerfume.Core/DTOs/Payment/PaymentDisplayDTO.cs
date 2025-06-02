@@ -11,5 +11,4 @@ public class PaymentDisplayDTO
     public decimal TotalAmount => Amount + ShippingFee;
     public bool IsPaid { get; set; }
     public DateTime? PaidAt { get; set; }
-    public string? TransactionCode { get; set; }
 }
