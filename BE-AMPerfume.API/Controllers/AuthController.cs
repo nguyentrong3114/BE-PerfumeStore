@@ -75,6 +75,7 @@ namespace BE_AMPerfume.API.Controllers
                 message = "Đã đăng nhập"
             });
         }
+
         [HttpDelete()]
         public async Task<IActionResult> LogoutAsync()
         {
@@ -82,6 +83,7 @@ namespace BE_AMPerfume.API.Controllers
             HttpContext.Response.Cookies.Delete("token");
             return Ok(new { message = "Đăng xuất thành công" });
         }
+
         [HttpGet("google")]
         public IActionResult GoogleLogin()
         {
@@ -101,6 +103,7 @@ namespace BE_AMPerfume.API.Controllers
             };
             return Challenge(props, FacebookDefaults.AuthenticationScheme);
         }
+
         [HttpGet("github")]
         public IActionResult LoginWithGitHub()
         {
@@ -130,6 +133,33 @@ namespace BE_AMPerfume.API.Controllers
             return Redirect("http://localhost:3000/");
         }
 
+        // --- QUÊN MẬT KHẨU (FORGOT PASSWORD) ---
 
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO dto)
+        {
+            var result = await _authService.SendOtpToEmailAsync(dto.Email);
+            if (!result)
+                return NotFound(new { message = "Không tìm thấy email này!" });
+            return Ok(new { message = "OTP đã được gửi về email." });
+        }
+
+        [HttpPost("verify-otp")]
+        public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpDTO dto)
+        {
+            var result = await _authService.VerifyOtpAsync(dto.Email, dto.Otp);
+            if (!result)
+                return BadRequest(new { message = "OTP không hợp lệ hoặc đã hết hạn!" });
+            return Ok(new { message = "OTP hợp lệ, bạn có thể đổi mật khẩu." });
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO dto)
+        {
+            var result = await _authService.ResetPasswordAsync(dto.Email, dto.NewPassword, dto.Otp);
+            if (!result)
+                return BadRequest(new { message = "Đổi mật khẩu thất bại. OTP không hợp lệ hoặc đã hết hạn!" });
+            return Ok(new { message = "Đổi mật khẩu thành công!" });
+        }
     }
 }

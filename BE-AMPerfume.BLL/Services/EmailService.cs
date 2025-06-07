@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Mail;
+using BE_AMPerfume.Core.Models;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 
@@ -50,5 +51,21 @@ public class EmailService : IEmailService
             return Task.FromResult(savedCode == code);
         }
         return Task.FromResult(false);
+    }
+
+    public Task SendVerificationCodeAsync(string email, object value, string otp)
+    {
+        if (value is string fullName)
+        {
+            return SendVerificationCodeAsync(email, fullName, otp);
+        }
+        else if (value is User user)
+        {
+            return SendVerificationCodeAsync(email, user.Name ?? email, otp);
+        }
+        else
+        {
+            throw new ArgumentException("Invalid value type for sending verification code.");
+        }
     }
 }

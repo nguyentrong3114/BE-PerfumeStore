@@ -61,9 +61,21 @@ public class UserRepository : IUserRepository
 
         // Update properties as needed
         existingUser.IsVerify = user.IsVerify;
-        // Add other properties as necessary
+        // Add other properties as necessaryResetPasswordAsync
 
         _context.Users.Update(existingUser);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
+
+    public async Task<bool> UpdatePasswordByOtpAsync(string email, string newPasswordHash)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        if (user == null) return false;
+
+        user.PasswordHash = newPasswordHash;
+        _context.Users.Update(user);
         await _context.SaveChangesAsync();
         return true;
     }

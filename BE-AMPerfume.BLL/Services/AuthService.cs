@@ -10,11 +10,13 @@ public class AuthService : IAuthService
     private readonly JwtTokenGenerator _tokenGenerator;
     private readonly IUserRepository _userRepository;
     private readonly IEmailService _emailService;
-    public AuthService(JwtTokenGenerator tokenGenerator, IUserRepository userRepository, IEmailService emailService)
+    private readonly IForgotPasswordService _forgotPasswordService;
+    public AuthService(JwtTokenGenerator tokenGenerator, IUserRepository userRepository, IEmailService emailService, IForgotPasswordService forgotPasswordService)
     {
         _tokenGenerator = tokenGenerator;
         _userRepository = userRepository;
         _emailService = emailService;
+        _forgotPasswordService = forgotPasswordService;
     }
 
     public async Task<AuthResponseDTO?> LoginAsync(LoginDTO loginDto)
@@ -76,6 +78,18 @@ public class AuthService : IAuthService
        
         var token = _tokenGenerator.GenerateToken(user.Email, user.Name, user.Id,user.Role);
         return token;
+    }
+
+    public async Task<bool> SendOtpToEmailAsync(string email)
+        => await _forgotPasswordService.SendOtpToEmailAsync(email);
+
+    public async Task<bool> VerifyOtpAsync(string email, string otp)
+        => await _forgotPasswordService.VerifyOtpAsync(email, otp);
+
+    public async Task<bool> ResetPasswordAsync(string email, string newPassword, string otp)
+    {
+        var hashedPassword = HashPassword(newPassword);
+        return await _forgotPasswordService.ResetPasswordAsync(email, hashedPassword, otp);
     }
 
 }

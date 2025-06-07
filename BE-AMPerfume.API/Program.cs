@@ -36,7 +36,10 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(
             "http://localhost:3000",
-            "http://localhost:5173"
+            "http://localhost:5173",
+            "http://192.168.100.90:3000",
+            "http://192.168.100.40:3000"
+            
         )
         .AllowAnyHeader()
         .AllowAnyMethod()
@@ -61,6 +64,7 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IForgotPasswordService, ForgotPasswordService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ICartItemService, CartItemService>();

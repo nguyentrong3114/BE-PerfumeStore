@@ -122,8 +122,10 @@ public class ProductRepository : IProductRepository
         var products = await _context.Products
             .Where(p => p.Name.ToLower().Contains(keyword))
             .Include(p => p.ProductImages)
+            .Include(p => p.Brand)
+            .Include(p => p.Category)
             .ToListAsync();
-
+        
         foreach (var product in products)
         {
             product.ProductImages = product.ProductImages
